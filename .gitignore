@@ -1,4 +1,14 @@
+build/
+
 scripts/utils/__pycache__
 scripts/cloudfront_config_rendered.json
 scripts/encoded_cloudfront_config_rendered.json
 cli/utils/__pycache__/
+cli/cloudfront_config_rendered.json
+cli/encoded_cloudfront_config_rendered.json
+
+src/js/build/
+src/js/node_modules
+.DS_Store
+
+.aws-sam/
