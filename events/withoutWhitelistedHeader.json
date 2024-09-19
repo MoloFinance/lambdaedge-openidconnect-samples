@@ -1,0 +1,48 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionId": "EXAMPLE"
+        },
+        "request": {
+          "headers": {
+            "host": [
+              {
+                "key": "Host",
+                "value": "host.cloudfront.net"
+              }
+            ],
+            "user-name": [
+              {
+                "key": "User-Name",
+                "value": "CloudFront"
+              }
+            ],
+            "not-allowed-token": [
+              {
+                "key": "not-allowed-token",
+                "value": "123"
+              }
+            ]
+          },
+          "clientIp": "2001:cdba::3257:9652",
+          "uri": "/",
+          "method": "GET"
+        },
+        "response": {
+          "status": "200",
+          "statusDescription": "OK",
+          "headers": {
+            "x-cache": [
+              {
+                "key": "X-Cache",
+                "value": "Hello from Cloudfront"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

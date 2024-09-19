@@ -1,0 +1,48 @@
+{
+  "Records": [
+    {
+      "cf": {
+        "config": {
+          "distributionId": "EXAMPLE"
+        },
+        "request": {
+          "headers": {
+            "host": [
+              {
+                "key": "Host",
+                "value": "uat.molofinance.com"
+              }
+            ],
+            "user-name": [
+              {
+                "key": "User-Name",
+                "value": "CloudFront"
+              }
+            ],
+            "okta-bypass-token": [
+              {
+                "key": "okta-bypass-token",
+                "value": "invalid value"
+              }
+            ]
+          },
+          "clientIp": "2001:cdba::3257:9652",
+          "uri": "/",
+          "method": "GET"
+        },
+        "response": {
+          "status": "200",
+          "statusDescription": "OK",
+          "headers": {
+            "x-cache": [
+              {
+                "key": "X-Cache",
+                "value": "Hello from Cloudfront"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
