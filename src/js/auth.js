@@ -66,13 +66,13 @@ async function authenticate(evt) {
 	const { request } = evt.Records[0].cf;
 	const { headers, querystring } = request;
 	const queryString = QueryString.parse(querystring);
-	log.info(config.CALLBACK_PATH);
-	log.info(request.uri);
+	// log.info(config.CALLBACK_PATH);
+	// log.info(request.uri);
 
 	// Allow bypass OKTA login
 	if (shouldBypassAuth(request, headers)) {
 		log.info('bypassing OKTA authentication...')
-		return { request };
+		return request;
 	}
 
 	if (request.uri.startsWith(config.CALLBACK_PATH)) {
@@ -103,16 +103,24 @@ async function authenticate(evt) {
 function shouldBypassAuth(request, headers) {
 	let bypassAuth = false;
 
-	Object.entries(headers).forEach(([headerName, header]) => {
-		log.info(`headerName: ${headerName}, headerValue: ${header[0].value}`);
-		Object.entries(config.BYPASS_HEADERS).forEach(([bypassHeader, bypassHeaderValue]) => {
-			log.info(`bypassHeader: ${bypassHeader}, bypassValue: ${bypassHeaderValue}`)
-			if (bypassHeader === headerName && bypassHeaderValue == header[0].value) {
-				log.info('Found a header that matches bypass config...')
-				bypassAuth = true
+	log.info('looking for matching bypass header')
+	for (const [bypassHeader, bypassHeaderValue] of Object.entries(config.BYPASS_HEADERS)) {
+		// log.info(`bypassHeader: ${bypassHeader}, bypassValue: ${bypassHeaderValue}`)
+		// log.info(`header keys = ${Object.keys(headers)}`)
+		if (Object.keys(headers).includes(bypassHeader)) {
+			log.info('got a matching bypass header in request, checking value...');
+			headerValue = headers[bypassHeader][0].value;
+			// log.info(`value = ${headerValue}`);
+
+			if (headerValue === bypassHeaderValue) {
+				log.info('got a matching bypass header and value');
+				bypassAuth = true;
+				break;
+			} else {
+				log.info('no match for bypass header value');
 			}
-		})
-	})
+		}
+	}
 
 	return bypassAuth;
 }
