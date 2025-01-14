@@ -99,6 +99,10 @@ Resources:
           Handler: auth.handler
           Timeout: 5
           AutoPublishAlias: LIVE
+          Architectures:
+            # NOTE alternate these to match your target CPU Architecture! 
+            # - x86_64
+            - arm64
     LambdaEdgeFunctionRole:
       Type: AWS::IAM::Role
       Properties:

@@ -70,7 +70,7 @@ async function authenticate(evt) {
 	// log.info(request.uri);
 
 	// Allow bypass OKTA login
-	if (shouldBypassAuth(request, headers)) {
+	if (shouldBypassAuth(headers)) {
 		log.info('bypassing OKTA authentication...')
 		return request;
 	}
@@ -100,7 +100,7 @@ async function authenticate(evt) {
 
 // shouldBypassAuth checks if the request should bypass authentication
 // based on a defined header being specified
-function shouldBypassAuth(request, headers) {
+function shouldBypassAuth(headers) {
 	let bypassAuth = false;
 
 	log.info('looking for matching bypass header')
@@ -118,6 +118,21 @@ function shouldBypassAuth(request, headers) {
 				break;
 			} else {
 				log.info('no match for bypass header value');
+			}
+		}
+	}
+
+	log.info("looking for authorization header");
+	if (Object.keys(headers).includes("authorization")) {
+		log.info("got an authorization header, checking value...");
+		authHeaderValue = headers.authorization[0].value;
+
+		for (const [authUser, authPass] of Object.entries(config.BASIC_AUTH_USERS || {})) {
+			authString = 'Basic ' + new Buffer(authUser + ':' + authPass).toString('base64');
+			if (authHeaderValue == authString) {
+				log.info("got a matching basic auth value");
+				bypassAuth = true;
+				break;
 			}
 		}
 	}
@@ -297,7 +312,7 @@ async function setConfig(event) {
 	}
 
 	// set PKCE values if client_secret is not present in configurations
-	if (config.TOKEN_REQUEST.client_secret == undefined){
+	if (config.TOKEN_REQUEST.client_secret == undefined) {
 		config.AUTH_REQUEST.code_challenge_method = "S256";
 		config.AUTH_REQUEST.code_challenge = pkceCodeChallenge;
 		config.AUTH_REQUEST.state = "state";
@@ -326,15 +341,15 @@ async function setJwks() {
 }
 
 function generatePkceCodeVerifier(size = 43) {
-		return Crypto
+	return Crypto
 		.randomBytes(size)
 		.toString('hex')
 		.slice(0, size)
 }
 
-function generatePkceCodeChallenge(codeVerifier){
-		var hash = Crypto.createHash('sha256').update(codeVerifier).digest();
-		return Base64Url.encode(hash);
+function generatePkceCodeChallenge(codeVerifier) {
+	var hash = Crypto.createHash('sha256').update(codeVerifier).digest();
+	return Base64Url.encode(hash);
 }
 
 // sets PKCE code verifier and code challenge values
@@ -343,7 +358,7 @@ async function setPkceConfigs() {
 		pkceCodeVerifier = generatePkceCodeVerifier();
 		pkceCodeChallenge = generatePkceCodeChallenge(pkceCodeVerifier);
 	}
-	
+
 }
 
 // prepareConfigGlobals sets up all the lambda globals if they are not already set.
@@ -370,7 +385,7 @@ function getRedirectPayload({ evt, queryString, decodedToken, headers }) {
 							: queryString.state
 				}
 			],
-			'login': [ { key: 'login', value: decodedToken.payload.email } ],
+			'login': [{ key: 'login', value: decodedToken.payload.email }],
 			'set-cookie': [
 				{
 					key: 'Set-Cookie',
