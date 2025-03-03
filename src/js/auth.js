@@ -420,7 +420,10 @@ function getRedirectPayload({ evt, queryString, decodedToken, headers }) {
 function getOidcRedirectPayload(request) {
 	const { nonce, hash } = getNonceAndHash();
 	config.AUTH_REQUEST.nonce = nonce;
-	config.AUTH_REQUEST.state = request.uri; // Redirect to Authorization Server
+
+	const queryString = QueryString.parse(request.querystring);
+	var state = `${request.uri}?${QueryString.stringify(queryString)}`;
+	config.AUTH_REQUEST.state = state; // Redirect to Authorization Server
 
 	return {
 		status: '302',
